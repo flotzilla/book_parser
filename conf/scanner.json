@@ -1,0 +1,13 @@
+{
+  "ScanExt": [
+    "pdf"
+  ],
+
+  "SkippedExt": [
+    "txt"
+  ],
+  "Parsers": [
+    { "pdf" :  ""},
+    { "epub":  ""}
+  ]
+}
