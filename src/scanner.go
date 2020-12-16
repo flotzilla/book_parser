@@ -1,15 +1,17 @@
 package src
 
 import (
-	"fmt"
+	_ "book_parser/src/logging"
+	"github.com/sirupsen/logrus"
 	"os"
 	"path/filepath"
 	"strings"
 )
 
-func Scan(filePath string, cnf Config) ScanResult {
+func Scan(filePath string, cnf *Config) (ScanResult, error) {
 	sc := ScanResult{}
 
+	logrus.Trace("dive into ", filePath)
 	err := filepath.Walk(filePath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -36,11 +38,7 @@ func Scan(filePath string, cnf Config) ScanResult {
 
 	sc.BooksFoundTotalCount = sc.BooksSkippedCount + sc.BooksTotalCount
 
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	return sc
+	return sc, err
 }
 
 func creteBookFile(info os.FileInfo, ext string, path string) BookFile {
@@ -53,5 +51,6 @@ func creteBookFile(info os.FileInfo, ext string, path string) BookFile {
 		info.Mode()&os.ModeSymlink != 0,
 	}
 
+	logrus.Trace("Created book: ", b.FilePath)
 	return b
 }

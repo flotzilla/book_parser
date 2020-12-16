@@ -26,6 +26,14 @@ func GetConfig(configFile string) (*src.Config, error) {
 		return nil, err
 	}
 
-	conf.HasInit = true
 	return &conf, nil
+}
+
+func IsStringInSlice(a string, list []string) bool {
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
 }

@@ -1,4 +1,4 @@
-package pdf
+package types
 
 import "book_parser/src"
 import "github.com/flotzilla/pdf_parser"

@@ -37,7 +37,6 @@ type BookGrabber interface {
 type Config struct {
 	ScanExt    []string
 	SkippedExt []string
-	HasInit    bool
 }
 
 type ScanResult struct {
@@ -46,4 +45,12 @@ type ScanResult struct {
 	BooksTotalCount      int
 
 	Books []BookFile
+}
+
+type ParseResult struct {
+	Books  []Book
+	Errors []error
+	// time start
+	// time end
+	// books counter ??
 }

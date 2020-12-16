@@ -23,54 +23,58 @@ var (
 	cnf      src.Config
 )
 
-func help(args []string) {
-	logrus.Info("Available commands:")
-	for _, v := range commands {
-		fmt.Printf("%s - %s\n", v.Name, v.Description)
-	}
-}
-
 func init() {
-	cnf, err := utils.GetConfig("../conf/config.json")
-	if err != nil || !cnf.HasInit {
-		logrus.Error("Error during configuration init")
+	conf, err := utils.GetConfig("../conf/config.json")
+	if err != nil {
+		logrus.Error(err)
 	}
+
+	cnf = *conf
 
 	logrus.Debug("Configuration: \n", " * ScanExt: ", cnf.ScanExt, "\n * SkippedExt: ", cnf.SkippedExt)
 }
 
-func scan(args []string) {
-	var sc src.ScanResult
+func help(args []string) {
+	fmt.Println("Available commands:")
+	for _, v := range commands {
+		fmt.Printf(" %s - %s\n", v.Name, v.Description)
+	}
+}
 
+func scan(args []string) {
 	if len(args) > 0 {
 		for _, el := range args {
 			//TODO add gorutines
 			logrus.Info("Scanning directory: ", el)
-			sc = src.Scan(el, cnf)
-			showScanResult(&sc)
-			pr := parseScanResult(&sc)
-			showParseResult(pr)
+			scanAndParse(&el)
 		}
 	} else {
-		// scan current directory
 		currPath, err := os.Getwd()
+		logrus.Info("Scanning current directory: ", currPath)
 
 		if err != nil {
 			fmt.Println(err)
 		}
-
-		logrus.Info("Scanning current directory: ", currPath)
-		sc = src.Scan(currPath, cnf)
-
-		showScanResult(&sc)
-		pr := parseScanResult(&sc)
-		showParseResult(pr)
+		scanAndParse(&currPath)
 	}
 }
 
-func parseScanResult(result *src.ScanResult) *parser.ParseResult {
+func scanAndParse(currPath *string) {
+	sc, err := src.Scan(*currPath, &cnf)
+
+	if err != nil {
+		logrus.Error(err)
+		os.Exit(1)
+	}
+
+	showScanResult(&sc)
+	pr := parseScanResult(&sc)
+	showParseResult(pr)
+}
+
+func parseScanResult(result *src.ScanResult) *src.ParseResult {
 	if len(result.Books) != 0 {
-		pR := parser.Parse(result)
+		pR := parser.Parse(result, &cnf)
 
 		if len(pR.Errors) != 0 {
 			logrus.Error("Some errors found")
@@ -90,17 +94,18 @@ func showScanResult(sc *src.ScanResult) {
 		", total: ", sc.BooksTotalCount)
 }
 
-func showParseResult(pr *parser.ParseResult) {
+func showParseResult(pr *src.ParseResult) {
 	if pr == nil {
 		return
 	}
 	for _, el := range pr.Books {
-		fmt.Println(el.BookInfo)
+		logrus.Info(el.BookInfo)
 	}
 }
 
 func sync(args []string) {
-	logrus.Info(args)
+	logrus.Info("Showing args", args)
+	// TODO send results to server
 }
 
 func handleCommand(args []string) {
@@ -111,14 +116,12 @@ func handleCommand(args []string) {
 		if c, found := commands[args[0]]; found {
 			c.Runner(args[1:])
 		} else {
-			logrus.Warn("There is no such command")
+			fmt.Println("There is no such command")
 		}
 	}
 }
 
 func main() {
-	// TODO move logger configuration to conf/config.json file
-
 	commands = map[string]Command{
 		"help": Command{
 			Name:        "help",
