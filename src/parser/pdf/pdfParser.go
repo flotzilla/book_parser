@@ -3,8 +3,12 @@ package pdf
 import "book_parser/src"
 import "github.com/flotzilla/pdf_parser"
 
-func Parse(bookFile *src.BookFile) *src.BookInfo {
-	pdfInfo := pdf_parser.ParsePdf(bookFile.FilePath)
+func Parse(bookFile *src.BookFile) (*src.BookInfo, error) {
+	pdfInfo, err := pdf_parser.ParsePdf(bookFile.FilePath)
+
+	if err != nil {
+		return nil, err
+	}
 
 	bI := src.BookInfo{
 		Title:         pdfInfo.GetTitle(),
@@ -16,5 +20,5 @@ func Parse(bookFile *src.BookFile) *src.BookInfo {
 		Description:   pdfInfo.GetDescription(),
 	}
 
-	return &bI
+	return &bI, nil
 }

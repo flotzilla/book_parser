@@ -27,10 +27,7 @@ func help(args []string) {
 func scan(args []string) {
 
 	// TODO fix this
-	// import config from user folder, win/lin/mac
-	config, err := src.GetConfig("/home/bbyte/GolandProjects/book_parser/conf/scanner.json")
-	//fmt.Println(runtime.GOOS)
-	//fmt.Println(config)
+	config, err := src.GetConfig("../conf/scanner.json")
 
 	if err != nil {
 		fmt.Println("Error during configuration init")
