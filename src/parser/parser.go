@@ -2,9 +2,10 @@ package parser
 
 import (
 	"book_parser/src"
+	_ "book_parser/src/logging"
 	"book_parser/src/parser/pdf"
 	"errors"
-	"fmt"
+	"github.com/sirupsen/logrus"
 	"sync"
 )
 
@@ -29,7 +30,7 @@ type ParseResult struct {
 
 func Parse(scanResult *src.ScanResult) *ParseResult {
 
-	fmt.Println("Starting to parse")
+	logrus.Debug("Starting to parse")
 	pr := ParseResult{}
 
 	if len(scanResult.Books) == 0 {
@@ -47,27 +48,23 @@ func Parse(scanResult *src.ScanResult) *ParseResult {
 		go parseBook(&wg, bookFile, booksChan, errorsChan)
 	}
 
-	fmt.Println("Waiting for parsing workers to finish")
+	logrus.Info("Waiting for parsing workers to finish")
 	wg.Wait()
 	pr.Books = append(pr.Books, <-booksChan)
 	pr.Errors = append(pr.Errors, <-errorsChan)
-	fmt.Println("Parsing workers finished")
+	logrus.Info("Parsing workers finished")
 
 	return &pr
 }
 func parseBook(wg *sync.WaitGroup, bookFile src.BookFile, bookChan chan src.Book, errorChan chan error) {
-	fmt.Println("Worker for ", bookFile.FilePath, " started")
+	logrus.Debug("Worker for ", bookFile.FilePath, " started")
 	var (
 		bookInfo *src.BookInfo
 		err      error
 	)
 
 	defer func() {
-		fmt.Println("Worker for ", bookFile.FilePath, " finished")
-		if bookInfo != nil {
-			fmt.Println(bookInfo.Title)
-		}
-		fmt.Println("=======")
+		logrus.Debug("Worker for ", bookFile.FilePath, " finished")
 		wg.Done()
 	}()
 
@@ -80,7 +77,7 @@ func parseBook(wg *sync.WaitGroup, bookFile src.BookFile, bookChan chan src.Book
 		bookInfo, err = pdf.Parse(&bookFile)
 	case extFB2:
 		// TODO  handle fb2
-		fmt.Println("fb2 parse in process")
+		logrus.Warn("fb2 parse in process")
 	default:
 		errorChan <- errInvalidFileTypeParser
 	}

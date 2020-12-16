@@ -2,8 +2,11 @@ package main
 
 import (
 	"book_parser/src"
+	_ "book_parser/src/logging"
 	"book_parser/src/parser"
+	"book_parser/src/utils"
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"os"
 )
 
@@ -15,30 +18,35 @@ type Command struct {
 	Runner      CommandRunner
 }
 
-var commands map[string]Command
+var (
+	commands map[string]Command
+	cnf      src.Config
+)
 
 func help(args []string) {
-	fmt.Println("Available commands:")
+	logrus.Info("Available commands:")
 	for _, v := range commands {
 		fmt.Printf("%s - %s\n", v.Name, v.Description)
 	}
 }
 
-func scan(args []string) {
-
-	// TODO fix this
-	config, err := src.GetConfig("../conf/scanner.json")
-
-	if err != nil {
-		fmt.Println("Error during configuration init")
+func init() {
+	cnf, err := utils.GetConfig("../conf/config.json")
+	if err != nil || !cnf.HasInit {
+		logrus.Error("Error during configuration init")
 	}
 
+	logrus.Debug("Configuration: \n", " * ScanExt: ", cnf.ScanExt, "\n * SkippedExt: ", cnf.SkippedExt)
+}
+
+func scan(args []string) {
 	var sc src.ScanResult
 
 	if len(args) > 0 {
 		for _, el := range args {
-			fmt.Printf("Scanning directory: %s\n", el)
-			sc = src.Scan(el, *config)
+			//TODO add gorutines
+			logrus.Info("Scanning directory: ", el)
+			sc = src.Scan(el, cnf)
 			showScanResult(&sc)
 			pr := parseScanResult(&sc)
 			showParseResult(pr)
@@ -51,8 +59,8 @@ func scan(args []string) {
 			fmt.Println(err)
 		}
 
-		fmt.Printf("Scanning current directory: %s\n", currPath)
-		sc = src.Scan(currPath, *config)
+		logrus.Info("Scanning current directory: ", currPath)
+		sc = src.Scan(currPath, cnf)
 
 		showScanResult(&sc)
 		pr := parseScanResult(&sc)
@@ -65,8 +73,9 @@ func parseScanResult(result *src.ScanResult) *parser.ParseResult {
 		pR := parser.Parse(result)
 
 		if len(pR.Errors) != 0 {
+			logrus.Error("Some errors found")
 			for _, err := range pR.Errors {
-				fmt.Println(err)
+				logrus.Error(err)
 			}
 		}
 
@@ -77,13 +86,8 @@ func parseScanResult(result *src.ScanResult) *parser.ParseResult {
 }
 
 func showScanResult(sc *src.ScanResult) {
-	fmt.Printf("Found files: %d, skipped: %d, total: %d\n",
-		sc.BooksFoundTotalCount, sc.BooksSkippedCount, sc.BooksTotalCount)
-
-	//for _, el := range sc.Books {
-	//	fmt.Println("=========")
-	//	fmt.Println(el)
-	//}
+	logrus.Info("Found files: ", sc.BooksFoundTotalCount, ", skipped: ", sc.BooksSkippedCount,
+		", total: ", sc.BooksTotalCount)
 }
 
 func showParseResult(pr *parser.ParseResult) {
@@ -96,7 +100,7 @@ func showParseResult(pr *parser.ParseResult) {
 }
 
 func sync(args []string) {
-	fmt.Println(args)
+	logrus.Info(args)
 }
 
 func handleCommand(args []string) {
@@ -107,12 +111,14 @@ func handleCommand(args []string) {
 		if c, found := commands[args[0]]; found {
 			c.Runner(args[1:])
 		} else {
-			fmt.Println("There is no such command")
+			logrus.Warn("There is no such command")
 		}
 	}
 }
 
 func main() {
+	// TODO move logger configuration to conf/config.json file
+
 	commands = map[string]Command{
 		"help": Command{
 			Name:        "help",

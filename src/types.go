@@ -33,3 +33,17 @@ type BookParser interface {
 type BookGrabber interface {
 	GrabData(bookInfo *BookInfo)
 }
+
+type Config struct {
+	ScanExt    []string
+	SkippedExt []string
+	HasInit    bool
+}
+
+type ScanResult struct {
+	BooksFoundTotalCount int
+	BooksSkippedCount    int
+	BooksTotalCount      int
+
+	Books []BookFile
+}

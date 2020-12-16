@@ -1,44 +1,11 @@
 package src
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 )
-
-type Config struct {
-	ScanExt    []string
-	SkippedExt []string
-}
-
-type ScanResult struct {
-	BooksFoundTotalCount int
-	BooksSkippedCount    int
-	BooksTotalCount      int
-
-	Books []BookFile
-}
-
-func GetConfig(configFile string) (*Config, error) {
-	file, err := os.Open(configFile)
-
-	defer file.Close()
-	if err != nil {
-		return nil, err
-	}
-
-	dec := json.NewDecoder(file)
-	conf := Config{}
-
-	err = dec.Decode(&conf)
-	if err != nil {
-		return nil, err
-	}
-
-	return &conf, nil
-}
 
 func Scan(filePath string, cnf Config) ScanResult {
 	sc := ScanResult{}

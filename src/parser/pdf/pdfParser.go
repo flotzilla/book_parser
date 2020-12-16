@@ -3,6 +3,7 @@ package pdf
 import "book_parser/src"
 import "github.com/flotzilla/pdf_parser"
 
+// wrapper around pdf_parser package
 func Parse(bookFile *src.BookFile) (*src.BookInfo, error) {
 	pdfInfo, err := pdf_parser.ParsePdf(bookFile.FilePath)
 
