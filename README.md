@@ -3,12 +3,13 @@
 # BOOK PARSER
 
 Console book scanner parser for book cataloging , written in go
-with ability to 
+with ability to sync with remote (wip)
 ## WIP
 [pdf parser library](https://github.com/flotzilla/pdf_parser)
 
 ### Configuration
 Main configuration here: `conf/config.json` 
+
 Config logrus logger here: `src/logging/logging.go`
 
 ### License
