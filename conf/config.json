@@ -1,6 +1,8 @@
 {
   "ScanExt": [
-    "pdf"
+    "pdf",
+    "fb2",
+    "djvu"
   ],
 
   "SkippedExt": [

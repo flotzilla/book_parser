@@ -54,3 +54,12 @@ type ParseResult struct {
 	// time end
 	// books counter ??
 }
+
+type ParseError struct {
+	PreviousError error
+	FileName      string
+}
+
+func (p ParseError) Error() string {
+	panic(p.PreviousError.Error() + ". Filename: " + p.FileName)
+}

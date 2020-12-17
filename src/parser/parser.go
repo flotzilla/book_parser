@@ -37,6 +37,7 @@ func Parse(scanResult *src.ScanResult, config *src.Config) *src.ParseResult {
 	var wg sync.WaitGroup
 
 	booksCount := len(scanResult.Books)
+	logrus.Debug("Books count: ", booksCount)
 	wg.Add(booksCount)
 	booksChan := make(chan src.Book, booksCount)
 	errorsChan := make(chan error, booksCount)
@@ -48,10 +49,20 @@ func Parse(scanResult *src.ScanResult, config *src.Config) *src.ParseResult {
 
 	logrus.Info("Waiting for parsing workers to finish")
 	wg.Wait()
+	close(booksChan)
+	close(errorsChan)
+
 	elapsed := time.Since(startTime)
-	pr.Books = append(pr.Books, <-booksChan)
-	pr.Errors = append(pr.Errors, <-errorsChan)
+
+	for el := range booksChan {
+		pr.Books = append(pr.Books, el)
+	}
+	for el := range errorsChan {
+		pr.Errors = append(pr.Errors, el)
+	}
+
 	logrus.Info("Parsing workers finished. Elapsed time: ", elapsed)
+	logrus.Info("ParsedBooks: ", len(pr.Books), ". Errors: ", len(pr.Errors))
 
 	return &pr
 }
@@ -69,13 +80,13 @@ func parseBook(wg *sync.WaitGroup, bookFile src.BookFile, bookChan chan src.Book
 	}()
 
 	if bookFile.IsSymLink {
-		errorChan <- symlinkError
+		errorChan <- src.ParseError{PreviousError: symlinkError, FileName: bookFile.FilePath}
 		return
 	}
 
 	if !utils.IsStringInSlice(bookFile.Ext, cnf.ScanExt) {
-		logrus.Debug("Skipped ext,", cnf.ScanExt, " for file ", bookFile.Name)
-		//return
+		logrus.Debug("Skipped ext,", cnf.ScanExt, " for file ", bookFile.FilePath)
+		return
 	}
 
 	switch bookFile.Ext {
@@ -85,16 +96,17 @@ func parseBook(wg *sync.WaitGroup, bookFile src.BookFile, bookChan chan src.Book
 		// TODO  handle fb2
 		logrus.Warn("fb2 parse in process")
 	default:
-		errorChan <- errInvalidFileTypeParser
+		errorChan <- src.ParseError{PreviousError: errInvalidFileTypeParser, FileName: bookFile.FilePath}
+		return
 	}
 
 	if err != nil {
-		errorChan <- err
+		errorChan <- src.ParseError{PreviousError: err, FileName: bookFile.FilePath}
 		return
 	}
 
 	if bookInfo == nil {
-		errorChan <- errCannotParseFile
+		errorChan <- src.ParseError{PreviousError: errCannotParseFile, FileName: bookFile.FilePath}
 		return
 	}
 
