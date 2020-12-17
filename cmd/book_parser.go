@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"os"
+	"sync"
 )
 
 type CommandRunner func([]string)
@@ -34,6 +35,28 @@ func init() {
 	logrus.Debug("Configuration: \n", " * ScanExt: ", cnf.ScanExt, "\n * SkippedExt: ", cnf.SkippedExt)
 }
 
+func main() {
+	commands = map[string]Command{
+		"help": Command{
+			Name:        "help",
+			Description: "Show help info",
+			Runner:      help,
+		},
+		"scan": Command{
+			Name:        "scan",
+			Description: "Will scan folder for books in case of any path arguments or read config file",
+			Runner:      scan,
+		},
+		"sync": Command{
+			Name:        "sync",
+			Description: "Sync parsed data to central database",
+			Runner:      syncCommand,
+		},
+	}
+
+	handleCommand(os.Args[1:])
+}
+
 func help(args []string) {
 	fmt.Println("Available commands:")
 	for _, v := range commands {
@@ -43,24 +66,33 @@ func help(args []string) {
 
 func scan(args []string) {
 	if len(args) > 0 {
+		var wg sync.WaitGroup
+		logrus.Trace(args)
 		for _, el := range args {
-			//TODO add gorutines
-			logrus.Info("Scanning directory: ", el)
-			scanAndParse(&el)
+			wg.Add(1)
+
+			el := el
+			go func(path string) {
+				scanAndParse(el)
+				defer wg.Done()
+			}(el)
 		}
+
+		wg.Wait()
+		logrus.Debug("All scans finished")
 	} else {
 		currPath, err := os.Getwd()
-		logrus.Info("Scanning current directory: ", currPath)
 
 		if err != nil {
-			fmt.Println(err)
+			logrus.Error(err)
 		}
-		scanAndParse(&currPath)
+		scanAndParse(currPath)
 	}
 }
 
-func scanAndParse(currPath *string) {
-	sc, err := src.Scan(*currPath, &cnf)
+func scanAndParse(currPath string) {
+	logrus.Info("Scanning directory: ", currPath)
+	sc, err := src.Scan(currPath, &cnf)
 
 	if err != nil {
 		logrus.Error(err)
@@ -103,7 +135,7 @@ func showParseResult(pr *src.ParseResult) {
 	}
 }
 
-func sync(args []string) {
+func syncCommand(args []string) {
 	logrus.Info("Showing args", args)
 	// TODO send results to server
 }
@@ -119,26 +151,4 @@ func handleCommand(args []string) {
 			fmt.Println("There is no such command")
 		}
 	}
-}
-
-func main() {
-	commands = map[string]Command{
-		"help": Command{
-			Name:        "help",
-			Description: "Show help info",
-			Runner:      help,
-		},
-		"scan": Command{
-			Name:        "scan",
-			Description: "Will scan folder for books in case of any path arguments or read config file",
-			Runner:      scan,
-		},
-		"sync": Command{
-			Name:        "sync",
-			Description: "Sync parsed data to central database",
-			Runner:      sync,
-		},
-	}
-
-	handleCommand(os.Args[1:])
 }
