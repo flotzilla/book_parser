@@ -7,19 +7,32 @@ type PdfParser struct{}
 
 // wrapper around pdf_parser package
 func (parser *PdfParser) Parse(bookFile *src.BookFile, withCover bool) (*src.BookInfo, error) {
-	pdfInfo, err := pdf_parser.ParsePdf(bookFile.FilePath)
+	b, err := pdf_parser.ParsePdf(bookFile.FilePath)
 
 	if err != nil {
 		return nil, err
 	}
 
+	pub := src.PublisherInfo{
+		BookName:  b.GetTitle(),
+		Publisher: b.GetPublisherInfo(),
+		ISBN:      b.GetISBN(),
+	}
+
+	var authors []string
+	authors = append(authors, b.GetAuthor())
+
 	// TODO fix this
 	bI := src.BookInfo{
-		Title:         pdfInfo.GetTitle(),
-		Author:        pdfInfo.GetAuthor(),
-		ISBN:          pdfInfo.GetISBN(),
-		NumberOfPages: pdfInfo.PagesCount,
-		Description:   pdfInfo.GetDescription(),
+		Title:         b.GetTitle(),
+		Author:        b.GetAuthor(),
+		Authors:       authors,
+		ISBN:          b.GetISBN(),
+		NumberOfPages: b.PagesCount,
+		Description:   b.GetDescription(),
+		Language:      b.GetLanguage(),
+		Date:          b.GetDate(),
+		PublisherInfo: pub,
 	}
 
 	// TODO finish this

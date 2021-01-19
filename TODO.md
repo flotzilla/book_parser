@@ -23,3 +23,12 @@ TODO
 * clean-up
 * write tests
 * make a real library
+
+
+###### fix for updating to latest pdf_parser
+```bash
+$ export GO111MODULE=on
+$ export GOPROXY=direct
+$ export GOSUMDB=off
+$ go get -v -u github.com/flotzilla/pdf_parser@version
+```
