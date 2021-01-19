@@ -32,7 +32,10 @@ func init() {
 
 	cnf = *conf
 
-	logrus.Debug("Configuration: \n", " * ScanExt: ", cnf.ScanExt, "\n * SkippedExt: ", cnf.SkippedExt)
+	logrus.Debug("Configuration:",
+		"\n * ScanExt: ", cnf.ScanExt,
+		"\n * SkippedExt: ", cnf.SkippedExt,
+		"\n * With Covers: ", cnf.WithCoverImages)
 }
 
 func main() {

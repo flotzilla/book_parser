@@ -14,11 +14,32 @@ type BookFile struct {
 type BookInfo struct {
 	Title         string
 	Author        string
+	Authors       []string
 	Pages         int
 	ISBN          string
 	NumberOfPages int
 	Subject       string
 	Description   string
+	Genres        []string
+	CoverPage     string
+	Language      string
+	Date          string
+	Publisher     Publisher
+	PublisherInfo PublisherInfo
+}
+
+type Publisher struct {
+	FirstName string
+	LastName  string
+	id        string
+}
+
+type PublisherInfo struct {
+	BookName  string
+	Publisher string
+	City      string
+	Year      string
+	ISBN      string
 }
 
 type Book struct {
@@ -35,8 +56,9 @@ type BookGrabber interface {
 }
 
 type Config struct {
-	ScanExt    []string
-	SkippedExt []string
+	ScanExt         []string
+	SkippedExt      []string
+	WithCoverImages bool
 }
 
 type ScanResult struct {
@@ -62,4 +84,8 @@ type ParseError struct {
 
 func (p ParseError) Error() string {
 	panic(p.PreviousError.Error() + ". Filename: " + p.FileName)
+}
+
+type Parser interface {
+	Parse(bookFile *BookFile, withCover bool) (*BookInfo, error)
 }

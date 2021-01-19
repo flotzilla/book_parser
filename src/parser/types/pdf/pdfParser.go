@@ -1,10 +1,12 @@
-package types
+package pdf_parser
 
 import "book_parser/src"
 import "github.com/flotzilla/pdf_parser"
 
+type PdfParser struct{}
+
 // wrapper around pdf_parser package
-func Parse(bookFile *src.BookFile) (*src.BookInfo, error) {
+func (parser *PdfParser) Parse(bookFile *src.BookFile, withCover bool) (*src.BookInfo, error) {
 	pdfInfo, err := pdf_parser.ParsePdf(bookFile.FilePath)
 
 	if err != nil {
@@ -20,6 +22,11 @@ func Parse(bookFile *src.BookFile) (*src.BookInfo, error) {
 		Subject:       "",
 		Description:   pdfInfo.GetDescription(),
 	}
+
+	// TODO finish this
+	//if withCover {
+	//bI.CoverPage = pdf_parser.
+	//}
 
 	return &bI, nil
 }

@@ -3,7 +3,8 @@ package parser
 import (
 	"book_parser/src"
 	_ "book_parser/src/logging"
-	"book_parser/src/parser/types"
+	fb2_parser "book_parser/src/parser/types/fb2"
+	pdf_parser "book_parser/src/parser/types/pdf"
 	"book_parser/src/utils"
 	"errors"
 	"github.com/sirupsen/logrus"
@@ -91,10 +92,11 @@ func parseBook(wg *sync.WaitGroup, bookFile src.BookFile, bookChan chan src.Book
 
 	switch bookFile.Ext {
 	case extPDF:
-		bookInfo, err = types.Parse(&bookFile)
+		parser := pdf_parser.PdfParser{}
+		bookInfo, err = parser.Parse(&bookFile, cnf.WithCoverImages)
 	case extFB2:
-		// TODO  handle fb2
-		logrus.Warn("fb2 parse in process")
+		parser := fb2_parser.Fb2Parser{}
+		bookInfo, err = parser.Parse(&bookFile, cnf.WithCoverImages)
 	default:
 		errorChan <- src.ParseError{PreviousError: errInvalidFileTypeParser, FileName: bookFile.FilePath}
 		return

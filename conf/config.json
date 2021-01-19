@@ -8,8 +8,5 @@
   "SkippedExt": [
     "txt"
   ],
-  "Parsers": [
-    { "pdf" :  ""},
-    { "epub":  ""}
-  ]
+  "withCoverImages": true
 }
