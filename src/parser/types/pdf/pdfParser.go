@@ -13,11 +13,12 @@ func (parser *PdfParser) Parse(bookFile *src.BookFile, withCover bool) (*src.Boo
 		return nil, err
 	}
 
+	// TODO fix this
 	bI := src.BookInfo{
 		Title:         pdfInfo.GetTitle(),
 		Author:        pdfInfo.GetAuthor(),
 		ISBN:          pdfInfo.GetISBN(),
-		NumberOfPages: pdfInfo.PagesCount, // TODO wtf is number of pages
+		NumberOfPages: pdfInfo.PagesCount,
 		Description:   pdfInfo.GetDescription(),
 	}
 
