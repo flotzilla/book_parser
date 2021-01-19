@@ -5,7 +5,7 @@ TODO
   - determine the first page
   - extract all
 
-* fix for multiple xref table
+* fix for pdf multiple xref table
   - normal xref table / trailer [done]
   - without trailer 
   - multiple xref/table [done]
