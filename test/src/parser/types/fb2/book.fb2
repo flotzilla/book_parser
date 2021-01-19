@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FictionBook xmlns="http://www.gribuser.ru/xml/fictionbook/2.0" xmlns:l="http://www.w3.org/1999/xlink">
+<description>
+  <title-info>
+    <genre>научпоп</genre>
+    <genre>физика</genre>
+    <author>
+      <first-name>John</first-name>
+      <last-name>Doe</last-name>
+    </author>
+    <book-title>Test book</book-title>
+    <annotation>
+      <p>Some annotation</p>
+    </annotation>
+    <keywords>tag1, tag2</keywords>
+    <date value="2021-01-01">2021</date>
+    <coverpage></coverpage>
+    <lang>eng</lang>
+    <src-lang>en</src-lang>
+    <translator>
+      <first-name>John</first-name>
+      <middle-name>not-doe</middle-name>
+      <last-name>Translator</last-name>
+    </translator>
+  </title-info>
+  <document-info>
+    <author>
+      <nickname>test-23</nickname>
+    </author>
+    <program-used>all-by-hand</program-used>
+    <date value="2021-01-19">2021-01-19</date>
+    <src-url></src-url>
+    <src-ocr></src-ocr>
+    <id>12313</id>
+    <version>1.0</version>
+    <history>
+      <p>Create this doc</p>
+    </history>
+    <publisher>
+      <first-name>Self Pub</first-name>
+      <last-name>Home Pub</last-name>
+      <id>123</id>
+    </publisher>
+  </document-info>
+  <publish-info>
+    <book-name>Test book</book-name>
+    <publisher>Self pub</publisher>
+    <city>Kyiv</city>
+    <year>2021</year>
+    <isbn>12313</isbn>
+  </publish-info>
+</description>
+<body>
+</body>
+</FictionBook>

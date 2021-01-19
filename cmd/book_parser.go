@@ -134,7 +134,8 @@ func showParseResult(pr *src.ParseResult) {
 		return
 	}
 	for _, el := range pr.Books {
-		logrus.Info(el.BookInfo)
+		logrus.Info(el.BookInfo.Title)
+		logrus.Info(el.BookInfo.Authors)
 	}
 }
 

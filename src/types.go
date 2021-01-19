@@ -15,25 +15,21 @@ type BookInfo struct {
 	Title         string
 	Author        string
 	Authors       []string
-	Pages         int
+	Tags          string // coma separated values
 	ISBN          string
 	NumberOfPages int
-	Subject       string
 	Description   string
 	Genres        []string
-	CoverPage     string
+	CoverPage     CoverPage
 	Language      string
 	Date          string
-	Publisher     Publisher
 	PublisherInfo PublisherInfo
 }
 
-type Publisher struct {
-	FirstName string
-	LastName  string
-	id        string
+type CoverPage struct {
+	ContentType string
+	Data        string
 }
-
 type PublisherInfo struct {
 	BookName  string
 	Publisher string

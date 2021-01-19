@@ -16,10 +16,8 @@ func (parser *PdfParser) Parse(bookFile *src.BookFile, withCover bool) (*src.Boo
 	bI := src.BookInfo{
 		Title:         pdfInfo.GetTitle(),
 		Author:        pdfInfo.GetAuthor(),
-		Pages:         pdfInfo.PagesCount,
 		ISBN:          pdfInfo.GetISBN(),
 		NumberOfPages: pdfInfo.PagesCount, // TODO wtf is number of pages
-		Subject:       "",
 		Description:   pdfInfo.GetDescription(),
 	}
 
