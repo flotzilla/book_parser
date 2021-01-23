@@ -9,6 +9,7 @@ import (
 	"os"
 )
 
+// #TODO update structure according to config.json
 type Config struct {
 	ScanExt         []string
 	SkippedExt      []string
