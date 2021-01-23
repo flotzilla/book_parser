@@ -44,6 +44,8 @@ func Parse(scanResult *src.ScanResult, config *src.Config) *src.ParseResult {
 	errorsChan := make(chan error, booksCount)
 
 	startTime := time.Now()
+	pr.StartTime = startTime.Unix()
+
 	for _, bookFile := range scanResult.Books {
 		go parseBook(&wg, bookFile, booksChan, errorsChan)
 	}
@@ -62,10 +64,15 @@ func Parse(scanResult *src.ScanResult, config *src.Config) *src.ParseResult {
 		pr.Errors = append(pr.Errors, el)
 	}
 
+	pr.Duration = elapsed
 	logrus.Info("Parsing workers finished. Elapsed time: ", elapsed)
 	logrus.Info("ParsedBooks: ", len(pr.Books), ". Errors: ", len(pr.Errors))
 
 	return &pr
+}
+
+func HandleResult(handler src.ParseResultHandler, parserResult *src.ParseResult) bool {
+	return handler.Handle(parserResult)
 }
 
 func parseBook(wg *sync.WaitGroup, bookFile src.BookFile, bookChan chan src.Book, errorChan chan error) {

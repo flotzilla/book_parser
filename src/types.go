@@ -66,11 +66,14 @@ type ScanResult struct {
 }
 
 type ParseResult struct {
-	Books  []Book
-	Errors []error
-	// time start
-	// time end
-	// books counter ??
+	Books     []Book
+	Errors    []error
+	StartTime int64
+	Duration  time.Duration
+}
+
+type ParseResultHandler interface {
+	Handle(result *ParseResult) bool
 }
 
 type ParseError struct {
