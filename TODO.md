@@ -1,10 +1,14 @@
 TODO
 =
 
+#### implement formats
+* .mobi format
+* .epub format
+
+#### Features
 * extract image
   - determine the first page
   - extract all
-
 * fix for pdf multiple xref table
   - normal xref table / trailer [done]
   - without trailer 
@@ -19,10 +23,8 @@ TODO
   - parse root element [done]
   - parse metadata from root [done]
   - parse info from trailer [done]
- 
 * clean-up
 * write tests
-* make a real library
 
 
 ###### fix for updating to latest pdf_parser
