@@ -1,6 +1,7 @@
 package src
 
 import (
+	cnf "book_parser/src/config"
 	_ "book_parser/src/logging"
 	"github.com/sirupsen/logrus"
 	"os"
@@ -8,8 +9,10 @@ import (
 	"strings"
 )
 
-func Scan(filePath string, cnf *Config) (ScanResult, error) {
-	sc := ScanResult{}
+func Scan(filePath string, cnf *cnf.Config) (ScanResult, error) {
+	sc := ScanResult{
+		FilePath: filePath,
+	}
 
 	logrus.Trace("dive into ", filePath)
 	err := filepath.Walk(filePath, func(path string, info os.FileInfo, err error) error {

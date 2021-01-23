@@ -1,6 +1,9 @@
 package src
 
-import "time"
+import (
+	cnf "book_parser/src/config"
+	"time"
+)
 
 type BookFile struct {
 	FilePath  string
@@ -51,13 +54,13 @@ type BookGrabber interface {
 	GrabData(bookInfo *BookInfo)
 }
 
-type Config struct {
-	ScanExt         []string
-	SkippedExt      []string
-	WithCoverImages bool
+type ConfigInterface interface {
+	GetConfigHash() string
+	ShowConfig()
 }
 
 type ScanResult struct {
+	FilePath             string
 	BooksFoundTotalCount int
 	BooksSkippedCount    int
 	BooksTotalCount      int
@@ -66,6 +69,9 @@ type ScanResult struct {
 }
 
 type ParseResult struct {
+	MachineId string
+	ParseId   string
+	FilePath  string
 	Books     []Book
 	Errors    []error
 	StartTime int64
@@ -74,6 +80,11 @@ type ParseResult struct {
 
 type ParseResultHandler interface {
 	Handle(result *ParseResult) bool
+}
+
+type ParserInterface interface {
+	Parse(scanResult *ScanResult, config *cnf.Config) *ParseResult
+	GenerateParseId(result *ParseResult, config *cnf.Config) string
 }
 
 type ParseError struct {
@@ -85,6 +96,6 @@ func (p ParseError) Error() string {
 	panic(p.PreviousError.Error() + ". Filename: " + p.FileName)
 }
 
-type Parser interface {
+type ParserInfoInterface interface {
 	Parse(bookFile *BookFile, withCover bool) (*BookInfo, error)
 }

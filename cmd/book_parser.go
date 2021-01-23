@@ -2,9 +2,9 @@ package main
 
 import (
 	"book_parser/src"
+	config "book_parser/src/config"
 	_ "book_parser/src/logging"
 	"book_parser/src/parser"
-	"book_parser/src/utils"
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"os"
@@ -21,21 +21,17 @@ type Command struct {
 
 var (
 	commands map[string]Command
-	cnf      src.Config
+	cnf      config.Config
 )
 
 func init() {
-	conf, err := utils.GetConfig("../conf/config.json")
+	conf, err := config.GetConfig("../conf/config.json")
 	if err != nil {
 		logrus.Error(err)
 	}
 
 	cnf = *conf
-
-	logrus.Debug("Configuration:",
-		"\n * ScanExt: ", cnf.ScanExt,
-		"\n * SkippedExt: ", cnf.SkippedExt,
-		"\n * With Covers: ", cnf.WithCoverImages)
+	cnf.ShowConfig()
 }
 
 func main() {
@@ -108,8 +104,10 @@ func scanAndParse(currPath string) {
 }
 
 func parseScanResult(result *src.ScanResult) *src.ParseResult {
+	p := parser.New()
+
 	if len(result.Books) != 0 {
-		pR := parser.Parse(result, &cnf)
+		pR := p.Parse(result, &cnf)
 
 		if len(pR.Errors) != 0 {
 			logrus.Error("Some errors found")
@@ -133,6 +131,11 @@ func showParseResult(pr *src.ParseResult) {
 	if pr == nil {
 		return
 	}
+	logrus.Debug("\tScan results:")
+	logrus.Debug("Machine Id: " + pr.MachineId)
+	logrus.Debug("ParseId: " + pr.ParseId)
+	logrus.Debug("Scan duration: " + pr.Duration.String())
+	logrus.Debug("\tBooks: ")
 	for _, el := range pr.Books {
 		logrus.Debug(el.BookInfo.Title, el.BookFile.Name)
 	}
