@@ -58,7 +58,9 @@ func (cnf *Config) GetConfigHash() string {
 	binary.PutVarint(b1, int64(withCover))
 	hasher.Write(b1)
 
-	return hex.EncodeToString(hasher.Sum(nil))
+	hash := hex.EncodeToString(hasher.Sum(nil))
+	logrus.Trace("Configuration hash: ", hash)
+	return hash
 }
 
 func (cnf *Config) ShowConfig() {

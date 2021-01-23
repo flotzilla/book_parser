@@ -61,7 +61,9 @@ func (parser Parser) GenerateParseId(result *src.ParseResult, config *cnf.Config
 
 	hasher.Write([]byte(result.FilePath))
 
-	return hex.EncodeToString(hasher.Sum(nil))
+	hash := hex.EncodeToString(hasher.Sum(nil))
+	logrus.Trace("Parser id hash: ", hash)
+	return hash
 }
 
 func (parser Parser) Parse(scanResult *src.ScanResult, config *cnf.Config) *src.ParseResult {
