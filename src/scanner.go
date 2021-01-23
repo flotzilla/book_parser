@@ -10,12 +10,17 @@ import (
 )
 
 func Scan(filePath string, cnf *cnf.Config) (ScanResult, error) {
-	sc := ScanResult{
-		FilePath: filePath,
+	absPath, e := filepath.Abs(filePath)
+	if e != nil {
+		return ScanResult{}, e
 	}
 
-	logrus.Trace("dive into ", filePath)
-	err := filepath.Walk(filePath, func(path string, info os.FileInfo, err error) error {
+	sc := ScanResult{
+		FilePath: absPath,
+	}
+
+	logrus.Trace("dive into ", absPath)
+	err := filepath.Walk(absPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
