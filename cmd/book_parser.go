@@ -103,6 +103,7 @@ func scanAndParse(currPath string) {
 	pr := parseScanResult(&sc)
 
 	parser.HandleResult(&parser_handler.ConsoleParseResultHandler{}, pr)
+	parser.HandleResult(&parser_handler.JsonParserResultHandler{}, pr)
 }
 
 func parseScanResult(result *src.ScanResult) *src.ParseResult {

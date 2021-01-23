@@ -61,15 +61,16 @@ type ScanResult struct {
 }
 
 type ParseResult struct {
-	MachineId string
-	ParseId   string
-	FilePath  string
-	StartTime int64
-	Duration  time.Duration
-	Books     []Book
-	Errors    []error
+	MachineId string        `json:"machineID"`
+	ParseId   string        `json:"parseID"`
+	FilePath  string        `json:"filePath"`
+	StartTime int64         `json:"startTime"`
+	Duration  time.Duration `json:"duration"`
+	Books     []Book        `json:"book"`
+	Errors    []error       `json:"error"`
 }
 
+// TODO rework handler
 type ParseResultHandler interface {
 	Handle(result *ParseResult) bool
 }
