@@ -15,6 +15,7 @@ func (handler *ConsoleParseResultHandler) Handle(pr *src.ParseResult) bool {
 	logrus.Debug("\tScan results:")
 	logrus.Debug("Machine Id: " + pr.MachineId)
 	logrus.Debug("ParseId: " + pr.ParseId)
+	logrus.Debug("Directory: " + pr.FilePath)
 	logrus.Debug("Scan duration: " + pr.Duration.String())
 	logrus.Debug("\tBooks: ")
 	for _, el := range pr.Books {
