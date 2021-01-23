@@ -46,14 +46,6 @@ type Book struct {
 	BookInfo BookInfo
 }
 
-type BookParser interface {
-	Parse(bookFile *BookFile) *BookInfo
-}
-
-type BookGrabber interface {
-	GrabData(bookInfo *BookInfo)
-}
-
 type ConfigInterface interface {
 	GetConfigHash() string
 	ShowConfig()
@@ -72,10 +64,10 @@ type ParseResult struct {
 	MachineId string
 	ParseId   string
 	FilePath  string
-	Books     []Book
-	Errors    []error
 	StartTime int64
 	Duration  time.Duration
+	Books     []Book
+	Errors    []error
 }
 
 type ParseResultHandler interface {
