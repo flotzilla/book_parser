@@ -8,8 +8,20 @@ Console book scanner-parser for book cataloging , written in go
 - [pdf](https://github.com/flotzilla/pdf_parser)
 - fb2
 
+#### Example
+Build and run: `go build book_parser.go`
+
+Executing: `./book_parser` - will scan current directory
+
+
+Scan directories: 
+```bash
+./book_parser scan directory_name directory_name1
+```
+
 #### Configuration
 Main configuration here: `conf/config.json`
+
 Config logrus logger here: `src/logging/logging.go`
 
 #### Links
