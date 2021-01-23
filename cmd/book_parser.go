@@ -5,6 +5,7 @@ import (
 	config "book_parser/src/config"
 	_ "book_parser/src/logging"
 	"book_parser/src/parser"
+	"book_parser/src/parser/handler"
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"os"
@@ -100,7 +101,8 @@ func scanAndParse(currPath string) {
 
 	showScanResult(&sc)
 	pr := parseScanResult(&sc)
-	showParseResult(pr)
+
+	parser.HandleResult(&parser_handler.ConsoleParseResultHandler{}, pr)
 }
 
 func parseScanResult(result *src.ScanResult) *src.ParseResult {
@@ -125,20 +127,6 @@ func parseScanResult(result *src.ScanResult) *src.ParseResult {
 func showScanResult(sc *src.ScanResult) {
 	logrus.Info("Found files: ", sc.BooksFoundTotalCount, ", skipped: ", sc.BooksSkippedCount,
 		", total: ", sc.BooksTotalCount)
-}
-
-func showParseResult(pr *src.ParseResult) {
-	if pr == nil {
-		return
-	}
-	logrus.Debug("\tScan results:")
-	logrus.Debug("Machine Id: " + pr.MachineId)
-	logrus.Debug("ParseId: " + pr.ParseId)
-	logrus.Debug("Scan duration: " + pr.Duration.String())
-	logrus.Debug("\tBooks: ")
-	for _, el := range pr.Books {
-		logrus.Debug(el.BookInfo.Title, el.BookFile.Name)
-	}
 }
 
 func syncCommand(args []string) {

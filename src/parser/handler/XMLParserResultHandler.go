@@ -1,4 +1,4 @@
-package parser
+package parser_handler
 
 import (
 	src "book_parser/src"
