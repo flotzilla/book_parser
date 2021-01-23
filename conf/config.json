@@ -8,5 +8,17 @@
   "SkippedExt": [
     "txt"
   ],
-  "withCoverImages": true
+  "withCoverImages": true,
+  "User": {
+    "login": "login",
+    "password": "pass"
+  },
+  "Sync": {
+    "SyncFolders": [
+      "sdfsdf",
+      "sdfsdfsdf"
+    ],
+    "server": "192.168.88.199",
+    "port": 9999
+  }
 }
